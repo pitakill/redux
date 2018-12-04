@@ -1,4 +1,17 @@
-const { createStore, combineReducers } = require('redux')
+const { createStore, combineReducers, applyMiddleware } = require('redux')
+
+// Middleware
+const logger = (store) => {
+  return next => action => {
+    console.log('Will dispatch', action)
+
+    const returnValue = next(action)
+
+    console.log('State after dispatch', store.getState())
+
+    return returnValue
+  }
+}
 
 // Reducer | Change are may by pure functions
 const counter = (state = 0, action) => {
@@ -24,7 +37,7 @@ const message = (state = '', action) => {
 const reducers = combineReducers({counter, message})
 
 // Single source of truth
-const store = createStore(reducers)
+const store = createStore(reducers, applyMiddleware(logger))
 
 store.subscribe(() => console.log(store.getState()))
 
